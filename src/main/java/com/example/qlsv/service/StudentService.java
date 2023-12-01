@@ -27,7 +27,11 @@ public class StudentService implements IStudentService{
         Optional<Student> student = studentRepository.findById(studentId);
         return student.map(Student::getStudentClasses).orElse(Collections.emptyList());
     }
-
+    public Student getStudentByUsername(String username) {
+        // Triển khai phương thức để truy vấn sinh viên từ username
+        // Return null nếu không tìm thấy
+        return studentRepository.findByStudentName(username).orElse(null);
+    }
     @Override
     public void createStudent(Student student) {
         studentRepository.save(student);

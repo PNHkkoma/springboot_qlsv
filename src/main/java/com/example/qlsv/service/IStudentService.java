@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IStudentService {
+    Student getStudentByUsername(String username);
     List<Student> getAllStudents();
     Optional<Student> getStudentById(Long studentId);
     List<StudentClass> getClassesByStudentId(Long studentId);

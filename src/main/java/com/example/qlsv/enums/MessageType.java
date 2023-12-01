@@ -1,7 +1,7 @@
-package com.example.qlsv.controler;
+package com.example.qlsv.enums;
 
 public enum MessageType {
     CHAT,
     JOIN,
-    LEAVER
+    LEAVE
 }

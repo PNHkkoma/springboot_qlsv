@@ -1,7 +1,7 @@
 package com.example.qlsv.config;
 
-import com.example.qlsv.controler.ChatMessage;
-import com.example.qlsv.controler.MessageType;
+import com.example.qlsv.model.ChatMessage;
+import com.example.qlsv.enums.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -24,8 +24,8 @@ public class WebSocketEventListener {
         if(username != null){
             log.info("User disconnected: {}", username);
             var chatMessage = ChatMessage.builder()
-                    .type(MessageType.LEAVER)
-                    .sender(username)
+                    .type(MessageType.LEAVE)
+                    .senderName(username)
                     .build();
             messagingTemplate.convertAndSend("/topic/puclic", chatMessage);
         }
