@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message ChatMessage {
+  enum MessageType {
+    CHAT = 0;
+    JOIN = 1;
+    LEAVER = 2;
+  }
+
+  MessageType type = 1;
+  string content = 2;
+  string sender = 3;
+}

@@ -1,6 +1,6 @@
 package com.example.qlsv.config;
 
-import com.example.qlsv.controler.ChatMessage;
+import com.example.qlsv.model.ChatMessageModel;
 import com.example.qlsv.controler.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class WebSocketEventListener {
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if(username != null){
             log.info("User disconnected: {}", username);
-            var chatMessage = ChatMessage.builder()
+            var chatMessage = ChatMessageModel.builder()
                     .type(MessageType.LEAVER)
                     .sender(username)
                     .build();
