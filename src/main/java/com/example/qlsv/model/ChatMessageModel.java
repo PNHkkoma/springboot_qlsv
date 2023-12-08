@@ -1,6 +1,6 @@
 package com.example.qlsv.model;
 
-import com.example.qlsv.controler.MessageType;
+import com.example.qlsv.enums.MessageType;
 import lombok.*;
 
 @Getter
