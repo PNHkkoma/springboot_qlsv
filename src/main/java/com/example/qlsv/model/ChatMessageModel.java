@@ -13,8 +13,4 @@ public class ChatMessageModel {
     private MessageType type;
     private String content;
     private String sender;
-
-    public MessageType getType() {
-        return this.type;
-    }
 }

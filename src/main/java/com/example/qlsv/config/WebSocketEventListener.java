@@ -20,6 +20,7 @@ public class WebSocketEventListener {
             SessionDisconnectEvent event
     ){
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        log.info("nghe được disconnect này: {}");
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if(username != null){
             log.info("User disconnected: {}", username);

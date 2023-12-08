@@ -1,9 +1,6 @@
 package com.example.qlsv.handler;
 
 import com.example.qlsv.ChatMessageOuterClass;
-import com.example.qlsv.ChatMessageOuterClass.ChatMessage;
-import com.example.qlsv.controler.MessageType;
-import com.example.qlsv.model.ChatMessageModel;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +22,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         try {
+            log.info("lỗi ở đây");
             // Xử lý tin nhắn dạng binary (protobuf) ở đây
             byte[] messageBytes = message.getPayload().array();
             ChatMessageOuterClass.ChatMessage protoMessage = ChatMessageOuterClass.ChatMessage.parseFrom(messageBytes);
 
             // Bổ sung mã xử lý protobuf ở đây nếu cần
         } catch (InvalidProtocolBufferException e) {
+            log.info("hoặc ở đây ở đây");
             // Xử lý ngoại lệ khi giải mã protobuf thất bại
             e.printStackTrace();
         }
@@ -38,20 +37,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         // Deserialize message using protobuf
+
         byte[] messageBytes = (byte[]) message.getPayload();
         ChatMessageOuterClass.ChatMessage protoMessage = ChatMessageOuterClass.ChatMessage.parseFrom(messageBytes);
-
         // Handle the protobuf message
         System.out.println("Deserialized message: " + protoMessage.getContent());
-
-        // Trả lời lại client
-        ChatMessageModel chatMessageModel = ChatMessageModel.builder()
-                .type(MessageType.valueOf(protoMessage.getType().name()))
-                .content(protoMessage.getContent())
-                .sender(protoMessage.getSender())
-                .build();
-
-        // Process the received message
 
         // Reply to the client
         ChatMessageOuterClass.ChatMessage replyMessage = ChatMessageOuterClass.ChatMessage.newBuilder()
@@ -59,7 +49,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 .setContent("Server received: " + protoMessage.getContent())
                 .setSender("Server")
                 .build();
-
         // Serialize and send the reply using protobuf
         byte[] replyBytes = replyMessage.toByteArray();
         session.sendMessage(new BinaryMessage(replyBytes));
@@ -70,5 +59,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // Xử lý khi một kết nối WebSocket bị đóng
         log.info("WebSocket connection closed: " + session.getId());
+        log.info("Close status: " + status.toString());
     }
 }

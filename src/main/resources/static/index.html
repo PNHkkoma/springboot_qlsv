@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Spring Boot WebSocket Chat Application</title>
     <link rel="stylesheet" href="/css/main.css" />
@@ -45,6 +46,27 @@
         </form>
     </div>
 </div>
+
+<!-- Thêm type="module" vào thẻ <script> chứa mã JavaScript -->
+<script type="module">
+    // Định nghĩa biến toàn cục để lưu trữ đối tượng ChatMessage
+    let ChatMessage;
+
+    // Import protobufjs as an ES6 module
+    import * as protobuf from 'https://cdn.jsdelivr.net/npm/protobufjs@6.11.0/dist/light/protobuf.js';
+
+    // Hàm load protobuf
+    async function loadProtobuf() {
+        const root = await protobuf.load('src/main/java/com/example/qlsv/ChatMessage.proto');
+        ChatMessage = root.lookupType('com.example.qlsv.ChatMessage');
+
+        // Gọi hàm khác của bạn hoặc bắt đầu ứng dụng ở đây...
+    }
+
+    // Gọi hàm loadProtobuf để tải protobuf và định nghĩa ChatMessage
+    loadProtobuf();
+</script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
