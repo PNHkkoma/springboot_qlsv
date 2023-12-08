@@ -1,6 +1,6 @@
 package com.example.qlsv.config;
 
-import com.example.qlsv.model.ChatMessage;
+import com.example.qlsv.model.ChatMessageModel;
 import com.example.qlsv.enums.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,13 @@ public class WebSocketEventListener {
             SessionDisconnectEvent event
     ){
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        log.info("nghe được disconnect này: {}");
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if(username != null){
             log.info("User disconnected: {}", username);
-            var chatMessage = ChatMessage.builder()
-                    .type(MessageType.LEAVE)
-                    .senderName(username)
+            var chatMessage = ChatMessageModel.builder()
+                    .type(MessageType.LEAVER)
+                    .sender(username)
                     .build();
             messagingTemplate.convertAndSend("/topic/puclic", chatMessage);
         }

@@ -1,68 +1,48 @@
 package com.example.qlsv.controler;
 
-
-import com.example.qlsv.model.ChatMessage;
-import com.example.qlsv.model.Student;
-import com.example.qlsv.repository.StudentRepository;
-
-import lombok.RequiredArgsConstructor;
+import com.example.qlsv.model.ChatMessageModel;
+import com.example.qlsv.ChatMessageOuterClass.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.Optional;
-
-
 @Controller
-@RequiredArgsConstructor
 @Slf4j
 public class ChatController {
-    private final StudentRepository studentRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public ChatController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
     @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(
-            @Payload ChatMessage chatMessage
+    public void sendMessage(
+            @Payload ChatMessageModel chatMessage
     ) {
-        // Lấy thông tin sinh viên từ DB bằng studentId
-        Optional<Student> studentOptional = studentRepository.findByStudentName(chatMessage.getSenderName());
-        String username = chatMessage.getSenderName();
-
-        // Kiểm tra nếu sinh viên tồn tại trong DB
-        if (studentOptional.isPresent()) {
-            Student student = studentOptional.get();
-
-            // Cập nhật thông tin của tin nhắn trước khi gửi đi
-            chatMessage.setSenderName(student.getStudentName());
-            chatMessage.setContent("[" + student.getStudentName() + "]: " + chatMessage.getContent());
-        }else {
-            // Ném ra một exception nếu username là null
-
-            log.info("không có gì sất"+username);
-        }
-
-        return chatMessage;
+        log.info("tao nhận được cái này: {}{}", chatMessage.getContent(),chatMessage.getSender());
+        ChatMessage protoMessage = ChatMessage.newBuilder()
+                .setType(ChatMessage.MessageType.CHAT)
+                .setContent(chatMessage.getContent())
+                .setSender(chatMessage.getSender())
+                .build();
+        byte[] messageBytes = protoMessage.toByteArray();
+        messagingTemplate.convertAndSend("/topic/public", messageBytes);
     }
 
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-    public ChatMessage addUser(
-            @Payload ChatMessage chatMessage,
+    public ChatMessageModel addUser(
+            @Payload ChatMessageModel chatMessage,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         // Add username in web socket session
-        String username = chatMessage.getSenderName();
-        Optional<Student> studentOptional = studentRepository.findByStudentName(username);
-        if (studentOptional.isPresent()) {
-            headerAccessor.getSessionAttributes().put("username", username);
-        } else {
-            // Ném ra một exception nếu username là null
-
-            log.info("không có gì thật"+username);
-        }
-
+        log.info("thằng này đã đc đk", chatMessage.getSender());
+        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
         return chatMessage;
     }
 }
