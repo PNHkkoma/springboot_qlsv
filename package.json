@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "protobufjs": "^7.2.5"
+  },
+  "scripts": {
+    "compile-protobuf": "pbjs -t static-module -w commonjs -o src/main/resources/static/js/ChatMessage.js src/main/java/com/example/qlsv/ChatMessage.proto"
+  }
+}
